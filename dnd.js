@@ -1,12 +1,10 @@
-const axios = require("axios");
+const { Client } = require("discord.js");
+require("dotenv").config();
 
-const testGet = () => {
-  axios
-    .get("https://www.dnd5eapi.co/api/spells/acid-arrow/")
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => res.json(err));
-};
+const client = new Client();
 
-testGet();
+client.once("ready", () => {
+  console.log("bot live");
+});
+
+client.login(process.env.TOKEN);
