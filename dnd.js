@@ -9,10 +9,18 @@ client.once("ready", () => {
   console.log("bot live");
 });
 
+client.on("messageCreate", async (msg) => {
+  const content = msg.content;
+  console.log(content);
+
+  if (msg === 'test') await channel.send('hello world')
+})
+
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
-
+  
   const { commandName } = interaction;
+
 
   if (commandName === "ping") {
     await interaction.reply("Pong!");
