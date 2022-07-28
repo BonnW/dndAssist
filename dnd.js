@@ -21,6 +21,9 @@ client.on("interactionCreate", async (interaction) => {
   
   const { commandName } = interaction;
 
+  console.log('interaction = ' + interaction)
+
+  console.log('commandName = ' + commandName)
 
   if (commandName === "ping") {
     await interaction.reply("Pong!");
@@ -40,22 +43,5 @@ client.on("interactionCreate", async (interaction) => {
   }
 });
 
-// else if (commandName === "dasmonsters") {
-//   axios.get('https://www.dnd5eapi.co/api/monsters/adult-black-dragon')
-//   .then((res) => {
-//     interaction.reply('data found');
-//     console.log(res.data);
-//   })
-//   .catch((err) => {
-//     console.log(err.response.data);
-//   });
-// }
-
-client.on('message', msg => {
-  const userName = msg.author.userName
-  if (msg.content === 'this bot is stupid') {
-    msg.channel.send(`you're stupid ${userName}`)
-  }
-})
 
 client.login(process.env.TOKEN);
