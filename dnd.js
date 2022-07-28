@@ -1,6 +1,8 @@
 const { Client, GatewayIntentBits } = require("discord.js");
 require("dotenv").config();
 
+const axios = require('axios');
+
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 client.once("ready", () => {
@@ -18,7 +20,34 @@ client.on("interactionCreate", async (interaction) => {
     await interaction.reply("Server info.");
   } else if (commandName === "user") {
     await interaction.reply("User info.");
+  } else if (commandName === "dasmonsters") {
+    axios.get('https://www.dnd5eapi.co/api/monsters/adult-black-dragon')
+    .then((res) => {
+      interaction.reply(`**${res.data.name}** \n ${res.data.type} \n ${res.data.alignment}`);
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err.response.data);
+    });
   }
 });
+
+// else if (commandName === "dasmonsters") {
+//   axios.get('https://www.dnd5eapi.co/api/monsters/adult-black-dragon')
+//   .then((res) => {
+//     interaction.reply('data found');
+//     console.log(res.data);
+//   })
+//   .catch((err) => {
+//     console.log(err.response.data);
+//   });
+// }
+
+client.on('message', msg => {
+  const userName = msg.author.userName
+  if (msg.content === 'this bot is stupid') {
+    msg.channel.send(`you're stupid ${userName}`)
+  }
+})
 
 client.login(process.env.TOKEN);
