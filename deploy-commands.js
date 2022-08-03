@@ -15,7 +15,7 @@ const commands = [
     .setDescription("Replies with requested class info!"),
   new SlashCommandBuilder()
     .setName("dasspells")
-    .setDescription("Replies with spell info!"),
+    .setDescription("Replies with requested spell info!"),
 ].map((command) => command.toJSON());
 
 const rest = new REST({ version: "10" }).setToken(token);

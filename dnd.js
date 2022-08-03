@@ -1,7 +1,7 @@
 const { Client, GatewayIntentBits } = require("discord.js");
 require("dotenv").config();
 
-const axios = require('axios');
+const axios = require('axios'); // need to remove and change to fetch
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
@@ -9,21 +9,18 @@ client.once("ready", () => {
   console.log("bot live");
 });
 
-client.on("messageCreate", async (msg) => {
-  const content = msg.content;
-  console.log(content);
+// client.on("messageCreate", async (msg) => {
+//   const content = msg.content;
+//   console.log(content);
 
-  if (msg === 'test') await channel.send('hello world')
-})
+//   if (msg === 'test') await channel.send('hello world')
+// })
 
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
   
   const { commandName } = interaction;
 
-  console.log('interaction = ' + interaction)
-
-  console.log('commandName = ' + commandName)
 
   if (commandName === "ping") {
     await interaction.reply("Pong!");
@@ -35,7 +32,7 @@ client.on("interactionCreate", async (interaction) => {
     axios.get('https://www.dnd5eapi.co/api/monsters/adult-black-dragon')
     .then((res) => {
       interaction.reply(`**${res.data.name}** \n ${res.data.type} \n ${res.data.alignment}`);
-      console.log(res);
+      // console.log(res);
     })
     .catch((err) => {
       console.log(err.response.data);
