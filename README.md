@@ -8,4 +8,12 @@ This bot is meant to be an assistant to the DM. The DM can use a quick command a
 
 # Technologies
 
-This project is mainly using Discord.JS
+This project is mainly using Discord.JS for interacting with Discord's API.
+This bot sends queries from slash commands to DND5e's API requesting official class/monster/etc information.
+
+# Commands
+
+Example Commands:
+/dasClass >Class< - returns requested class information
+/dasMonster >Monster< returns requested monster information
+/dasSpell >Spell< - returns requested spell information
