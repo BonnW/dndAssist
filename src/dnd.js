@@ -1,5 +1,8 @@
+require("dotenv").config({ path: __dirname + "/../.env" });
+
+const { token } = process.env;
+
 const { Client, GatewayIntentBits } = require("discord.js");
-require("dotenv").config();
 
 const axios = require("axios"); // need to remove and change to fetch
 
@@ -53,4 +56,4 @@ client.on("messageCreate", async (message) => {
 //   }
 // });
 
-client.login(process.env.TOKEN);
+client.login(token);
