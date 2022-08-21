@@ -36,6 +36,111 @@ const channel = client.once("ready", () => {
   console.log("bot live");
 });
 
+const savingThrows = (proficiencies) => {
+  newFormat = proficiencies.reduce(
+    (profSave, item) => (
+      (profSave[item.proficiency.name] = item.value.toString()), profSave
+    ),
+    {}
+  );
+
+  return newFormat;
+};
+
+const buildCard = (monster) => {
+  const monsterSaves = savingThrows(monster.proficiencies);
+  console.log(monsterSaves);
+  const embedCard = new EmbedBuilder()
+    .setTitle(monster.name)
+    .setDescription(`${monster.size} ${monster.type}, ${monster.alignment}`);
+
+  // for (const save of monsterSaves) {
+  // console.log(save);
+  // }
+
+  embedCard.addFields(
+    {
+      name: "Armor Class",
+      value: monster.armor_class.toString(),
+      inline: true,
+    },
+    {
+      name: "Hit Points",
+      value: monster.hit_points.toString(),
+      inline: true,
+    },
+    {
+      name: "Speed",
+      value: monster.speed.walk.toString(),
+      inline: true,
+    },
+    {
+      name: "\u200B",
+      value: "\u200B",
+    },
+    {
+      name: "PRIMARY ATTRIBUTES",
+      value: "---------------",
+    },
+    {
+      name: "STR",
+      value: monster.strength.toString(),
+      inline: true,
+    },
+    {
+      name: "DEX",
+      value: monster.dexterity.toString(),
+      inline: true,
+    },
+    {
+      name: "CON",
+      value: monster.constitution.toString(),
+      inline: true,
+    },
+    {
+      name: "INT",
+      value: monster.intelligence.toString(),
+      inline: true,
+    },
+    {
+      name: "WIS",
+      value: monster.wisdom.toString(),
+      inline: true,
+    },
+    {
+      name: "CHA",
+      value: monster.charisma.toString(),
+      inline: true,
+    },
+    {
+      name: "SAVING THROWS",
+      value: "x",
+    },
+    {
+      name: "\u200B",
+      value: "\u200B",
+    },
+    {
+      name: "ACTIONS",
+      value: "---------------",
+    }
+  );
+  monster.actions.map((action) => {
+    embedCard.addFields({ name: action.name, value: action.desc });
+  });
+  if (monster.legendary_actions) {
+    embedCard.addFields({
+      name: "LEGENDARY ACTIONS",
+      value: "---------------",
+    });
+    monster.legendary_actions.map((action) => {
+      embedCard.addFields({ name: action.name, value: action.desc });
+    });
+  }
+
+  return embedCard;
+};
+
 client.on("messageCreate", async (message) => {
   const channel = client.channels.cache.get(message.channelId);
 
@@ -49,74 +154,16 @@ client.on("messageCreate", async (message) => {
   }
 
   if (orderStart === "da") {
-    axios
+    await axios
       .get(`https://www.dnd5eapi.co/api/monsters/${orders.join("-")}`)
       .then((res) => {
-        console.log(res.data.armor_class);
         const monster = res.data;
-        const embedCard = new EmbedBuilder()
-          .setTitle(res.data.name)
-          .setDescription(
-            `${monster.size} ${monster.type}, ${monster.alignment}`
-          )
-          .addFields(
-            {
-              name: "Armor Class",
-              value: monster.armor_class.toString(),
-              inline: true,
-            },
-            {
-              name: "Hit Points",
-              value: monster.hit_points.toString(),
-              inline: true,
-            },
-            {
-              name: "Speed",
-              value: monster.speed.walk.toString(),
-              inline: true,
-            },
-            {
-              name: "\u200B",
-              value: "\u200B",
-            },
-            {
-              name: "STR",
-              value: monster.strength.toString(),
-              inline: true,
-            },
-            {
-              name: "DEX",
-              value: monster.dexterity.toString(),
-              inline: true,
-            },
-            {
-              name: "CON",
-              value: monster.constitution.toString(),
-              inline: true,
-            },
-            {
-              name: "INT",
-              value: monster.intelligence.toString(),
-              inline: true,
-            },
-            {
-              name: "WIS",
-              value: monster.wisdom.toString(),
-              inline: true,
-            },
-            {
-              name: "CHA",
-              value: monster.charisma.toString(),
-              inline: true,
-            }
-          );
-        monster.actions.map((action) => {
-          embedCard.addFields({ name: action.name, value: action.desc });
-        });
-        monster.legendary_actions.map((action) => {
-          embedCard.addFields({ name: action.name, value: action.desc });
-        });
-        channel.send({ embeds: [embedCard] });
+
+        channel.send({ embeds: [buildCard(monster)] });
+      })
+      .catch((err) => {
+        console.log(err);
+        channel.send({ content: "monster not found" });
       });
   }
 });
