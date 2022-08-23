@@ -51,7 +51,6 @@ const savingThrows = (proficiencies) => {
 };
 
 const buildActionCard = (monster) => {
-  console.log(monster);
   const actionCard = new EmbedBuilder()
     .setTitle(monster.name)
     .setDescription(`${monster.size} ${monster.type}, ${monster.alignment}`)
@@ -105,7 +104,7 @@ const buildStatCard = (monster) => {
   const monsterSaves = savingThrows(monster.proficiencies);
   // console.log(monster);
   // console.log(monsterSaves);
-  const embedCard = new EmbedBuilder()
+  const statCard = new EmbedBuilder()
     .setTitle(monster.name)
     .setDescription(`${monster.size} ${monster.type}, ${monster.alignment}`);
 
@@ -113,7 +112,7 @@ const buildStatCard = (monster) => {
   // console.log(save);
   // }
 
-  embedCard.addFields(
+  statCard.addFields(
     {
       name: "Armor Class",
       value: monster.armor_class.toString(),
@@ -170,9 +169,15 @@ const buildStatCard = (monster) => {
   );
 
   if (monster.proficiencies.length > 0) {
-    embedCard.addFields({ name: "SKILL SAVES", value: "---------------" });
+    statCard.addFields(
+      {
+        name: "\u200B",
+        value: "\u200B",
+      },
+      { name: "SKILL SAVES", value: "---------------" }
+    );
     for (const key in monsterSaves) {
-      embedCard.addFields({
+      statCard.addFields({
         name: key,
         value: "+" + monsterSaves[key].toString(),
         inline: true,
@@ -180,7 +185,7 @@ const buildStatCard = (monster) => {
     }
   }
 
-  return embedCard;
+  return statCard;
 };
 
 client.on("interactionCreate", async (interaction) => {
@@ -198,6 +203,8 @@ client.on("interactionCreate", async (interaction) => {
         embeds: [buildActionCard(monster)],
       });
     });
+
+  interaction.reply(`${searchItem} Actions Received`);
 });
 
 client.on("messageCreate", async (message) => {
