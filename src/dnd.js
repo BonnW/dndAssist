@@ -51,14 +51,59 @@ const savingThrows = (proficiencies) => {
 };
 
 const buildActionCard = (monster) => {
+  console.log(monster);
   const actionCard = new EmbedBuilder()
     .setTitle(monster.name)
-    .setDescription(`${monster.size} ${monster.type}, ${monster.alignment}`);
+    .setDescription(`${monster.size} ${monster.type}, ${monster.alignment}`)
+    .addFields(
+      { name: "\u200B", value: "\u200B" },
+      { name: "ACTIONS", value: "---------------" }
+    );
+
+  monster.actions.map((action) => {
+    actionCard.addFields({
+      name: action.name,
+      value: action.desc,
+      inline: true,
+    });
+  });
+
+  if (monster.special_abilities.length > 0) {
+    actionCard.addFields(
+      {
+        name: "\u200B",
+        value: "\u200B",
+      },
+      { name: "SPECIAL ABILITIES", value: "---------------" }
+    );
+
+    monster.special_abilities.map((sp) => {
+      actionCard.addFields({ name: sp.name, value: sp.desc, inline: true });
+    });
+  }
+
+  if (monster.legendary_actions.length > 0) {
+    actionCard.addFields(
+      {
+        name: "\u200B",
+        value: "\u200B",
+      },
+      {
+        name: "LEGENDARY ACTIONS",
+        value: "---------------",
+      }
+    );
+    monster.legendary_actions.map((action) => {
+      actionCard.addFields({ name: action.name, value: action.desc });
+    });
+  }
+
+  return actionCard;
 };
 
 const buildStatCard = (monster) => {
   const monsterSaves = savingThrows(monster.proficiencies);
-  console.log(monster);
+  // console.log(monster);
   // console.log(monsterSaves);
   const embedCard = new EmbedBuilder()
     .setTitle(monster.name)
@@ -81,7 +126,7 @@ const buildStatCard = (monster) => {
     },
     {
       name: "Speed",
-      value: `Walk: ${monster.speed.walk.toString()} Swim: ${monster.speed.swim.toString()}`,
+      value: `Walk: ${monster.speed.walk.toString()} `,
       inline: true,
     },
     {
@@ -121,40 +166,38 @@ const buildStatCard = (monster) => {
       name: "CHA",
       value: monster.charisma.toString(),
       inline: true,
-    },
-    {
-      name: "SKILL SAVES",
-      value: "---------------",
     }
   );
 
-  for (const key in monsterSaves) {
-    embedCard.addFields({
-      name: key,
-      value: "+" + monsterSaves[key].toString(),
-      inline: true,
-    });
+  if (monster.proficiencies.length > 0) {
+    embedCard.addFields({ name: "SKILL SAVES", value: "---------------" });
+    for (const key in monsterSaves) {
+      embedCard.addFields({
+        name: key,
+        value: "+" + monsterSaves[key].toString(),
+        inline: true,
+      });
+    }
   }
-
-  // monster.actions.map((action) => {
-  //   embedCard.addFields({ name: action.name, value: action.desc });
-  // });
-  // if (monster.legendary_actions) {
-  //   embedCard.addFields({
-  //     name: "LEGENDARY ACTIONS",
-  //     value: "---------------",
-  //   });
-  //   monster.legendary_actions.map((action) => {
-  //     embedCard.addFields({ name: action.name, value: action.desc });
-  //   });
-  // }
 
   return embedCard;
 };
 
-client.on("interactionCreate", (interaction) => {
+client.on("interactionCreate", async (interaction) => {
   if (!interaction.isButton()) return;
-  console.log(interaction.message.content);
+  const searchItem = interaction.message.content;
+  // console.log(searchItem);
+  const channel = client.channels.cache.get(interaction.message.channelId);
+
+  await axios
+    .get(`https://www.dnd5eapi.co/api/monsters/${searchItem}`)
+    .then((res) => {
+      const monster = res.data;
+      // console.log(monster);
+      channel.send({
+        embeds: [buildActionCard(monster)],
+      });
+    });
 });
 
 client.on("messageCreate", async (message) => {
