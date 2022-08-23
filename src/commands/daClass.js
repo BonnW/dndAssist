@@ -4,7 +4,29 @@ const axios = require("axios");
 const buildClassCard = (dndClass) => {
   const classCard = new EmbedBuilder().setTitle(dndClass.name);
 
-  classCard.addFields({ name: "test field name", value: "test field value" });
+  classCard.addFields(
+    {
+      name: "\u200B",
+      value: "\u200B",
+    },
+    { name: "PROFICIENCIES", value: "---------------" }
+  );
+
+  dndClass.proficiencies.map((item) => {
+    classCard.addFields({ name: item.name, value: "+", inline: true });
+  });
+
+  classCard.addFields(
+    {
+      name: "\u200B",
+      value: "\u200B",
+    },
+    { name: "SKILL SAVES", value: "---------------" }
+  );
+
+  dndClass.saving_throws.map((item) => {
+    classCard.addFields({ name: item.name, value: "+" });
+  });
 
   return classCard;
 };
@@ -20,14 +42,11 @@ module.exports = {
         .setRequired(true)
     ),
   async execute(interaction) {
-    // const channel = client.channels.cache.get(interaction.channelId);
     const className = interaction.options.getString("class");
-    console.log(interaction.channelId);
     await axios
       .get(`https://www.dnd5eapi.co/api/classes/${className}`)
       .then((res) => {
         const dndClass = res.data;
-        // channel.send({ embed: [buildClassCard(dndClass)] });
         interaction.reply({
           content: `Got: ${dndClass.name}`,
           embeds: [buildClassCard(dndClass)],

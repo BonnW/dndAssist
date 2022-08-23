@@ -5,17 +5,18 @@ const { REST } = require("@discordjs/rest");
 require("dotenv").config();
 const clientId = process.env.CLIENT_ID;
 const guildId = process.env.GUILD_ID;
-const token = process.env.TOKEN;
+const token = process.env.token;
 
 // note: did not run script yet -- DELETE THIS WHEN SCRIPT IS RUN
 const commands = [];
 const commandsPath = path.join(__dirname, "src", "commands");
+console.log(commandsPath);
 const commandFiles = fs
   .readdirSync(commandsPath)
   .filter((file) => file.endsWith(".js"));
 
 for (const file of commandFiles) {
-  const filePath = path.join(__dirname, file);
+  const filePath = path.join(commandsPath, file);
   const command = require(filePath);
   commands.push(command.data.toJSON());
 }

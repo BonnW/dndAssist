@@ -40,7 +40,6 @@ for (const file of commandFiles) {
   const command = require(filePath);
   client.commands.set(command.data.name, command);
 }
-// console.log(client.commands);
 
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
@@ -54,25 +53,6 @@ client.on("interactionCreate", async (interaction) => {
     await interaction.reply({ content: "error" });
   }
 });
-
-// client.on("interactionCreate", async (interaction) => {
-//   if (!interaction.isButton()) return;
-//   const searchItem = interaction.message.content;
-//   // console.log(searchItem);
-//   const channel = client.channels.cache.get(interaction.message.channelId);
-
-//   await axios
-//     .get(`https://www.dnd5eapi.co/api/monsters/${searchItem}`)
-//     .then((res) => {
-//       const monster = res.data;
-//       // console.log(monster);
-//       channel.send({
-//         embeds: [buildActionCard(monster)],
-//       });
-//     });
-
-//   interaction.reply(`${searchItem} Actions Received`);
-// });
 
 client.on("messageCreate", async (message) => {
   const channel = client.channels.cache.get(message.channelId);
