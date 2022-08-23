@@ -115,7 +115,7 @@ module.exports = {
     const query = monsterName.replace(/\s+/g, "-").toLowerCase();
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
-        .setCustomId("primary")
+        .setCustomId("monster")
         .setLabel("Get Monster Actions")
         .setStyle(ButtonStyle.Primary)
     );

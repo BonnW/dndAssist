@@ -53,9 +53,8 @@ const buildActionCard = (monster) => {
 module.exports = {
   name: "interactionCreate",
   async execute(interaction) {
-    if (!interaction.isButton()) return;
+    if (!interaction.isButton() || interaction.customId !== "monster") return;
     const searchItem = interaction.message.content;
-    console.log(searchItem);
     await axios
       .get(`https://www.dnd5eapi.co/api/monsters/${searchItem}`)
       .then((res) => {
