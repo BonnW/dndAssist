@@ -7,6 +7,9 @@ const {
   GatewayIntentBits,
   Collection,
   EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
 } = require("discord.js");
 
 const axios = require("axios");
@@ -47,9 +50,16 @@ const savingThrows = (proficiencies) => {
   return newFormat;
 };
 
-const buildCard = (monster) => {
+const buildActionCard = (monster) => {
+  const actionCard = new EmbedBuilder()
+    .setTitle(monster.name)
+    .setDescription(`${monster.size} ${monster.type}, ${monster.alignment}`);
+};
+
+const buildStatCard = (monster) => {
   const monsterSaves = savingThrows(monster.proficiencies);
-  console.log(monsterSaves);
+  console.log(monster);
+  // console.log(monsterSaves);
   const embedCard = new EmbedBuilder()
     .setTitle(monster.name)
     .setDescription(`${monster.size} ${monster.type}, ${monster.alignment}`);
@@ -71,7 +81,7 @@ const buildCard = (monster) => {
     },
     {
       name: "Speed",
-      value: monster.speed.walk.toString(),
+      value: `Walk: ${monster.speed.walk.toString()} Swim: ${monster.speed.swim.toString()}`,
       inline: true,
     },
     {
@@ -113,33 +123,39 @@ const buildCard = (monster) => {
       inline: true,
     },
     {
-      name: "SAVING THROWS",
-      value: "x",
-    },
-    {
-      name: "\u200B",
-      value: "\u200B",
-    },
-    {
-      name: "ACTIONS",
+      name: "SKILL SAVES",
       value: "---------------",
     }
   );
-  monster.actions.map((action) => {
-    embedCard.addFields({ name: action.name, value: action.desc });
-  });
-  if (monster.legendary_actions) {
+
+  for (const key in monsterSaves) {
     embedCard.addFields({
-      name: "LEGENDARY ACTIONS",
-      value: "---------------",
-    });
-    monster.legendary_actions.map((action) => {
-      embedCard.addFields({ name: action.name, value: action.desc });
+      name: key,
+      value: "+" + monsterSaves[key].toString(),
+      inline: true,
     });
   }
 
+  // monster.actions.map((action) => {
+  //   embedCard.addFields({ name: action.name, value: action.desc });
+  // });
+  // if (monster.legendary_actions) {
+  //   embedCard.addFields({
+  //     name: "LEGENDARY ACTIONS",
+  //     value: "---------------",
+  //   });
+  //   monster.legendary_actions.map((action) => {
+  //     embedCard.addFields({ name: action.name, value: action.desc });
+  //   });
+  // }
+
   return embedCard;
 };
+
+client.on("interactionCreate", (interaction) => {
+  if (!interaction.isButton()) return;
+  console.log(interaction.message.content);
+});
 
 client.on("messageCreate", async (message) => {
   const channel = client.channels.cache.get(message.channelId);
@@ -147,7 +163,12 @@ client.on("messageCreate", async (message) => {
   const orders = message.content.split(" ");
   const orderStart = orders.shift();
 
-  // console.log(orders); (S.N.: This is a horrible/ugle solution, find something better me.)
+  const row = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId("primary")
+      .setLabel("Get Monster Actions")
+      .setStyle(ButtonStyle.Primary)
+  );
 
   if (message.content === "ping") {
     await channel.send({ content: "pong" });
@@ -159,7 +180,11 @@ client.on("messageCreate", async (message) => {
       .then((res) => {
         const monster = res.data;
 
-        channel.send({ embeds: [buildCard(monster)] });
+        channel.send({
+          content: orders.join("-"),
+          embeds: [buildStatCard(monster)],
+          components: [row],
+        });
       })
       .catch((err) => {
         console.log(err);

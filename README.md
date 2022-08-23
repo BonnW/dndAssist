@@ -17,3 +17,7 @@ Example Commands:
 /dasClass >Class< - returns requested class information
 /dasMonster >Monster< returns requested monster information
 /dasSpell >Spell< - returns requested spell information
+
+
+# Issues/Stretch fixes
+I would like to add images to the embed on requests but currently not sure if there is a library of monster images available vs looking for alternative solutions.
