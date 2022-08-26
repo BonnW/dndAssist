@@ -27,6 +27,14 @@ const buildSpellCard = (spell) => {
       name: "DURATION",
       value: spell.duration.toString(),
       inline: true,
+    },
+    {
+      name: "CASTING TIME",
+      value: spell.casting_time.toString(),
+    },
+    {
+      name: "ATTACK TYPE",
+      value: spell.attack_type.toString(),
     }
   );
 
