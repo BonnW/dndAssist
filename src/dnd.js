@@ -2,7 +2,12 @@ require("dotenv").config({ path: __dirname + "/../.env" });
 const { token } = process.env;
 const fs = require("node:fs");
 const path = require("node:path");
-const { Client, GatewayIntentBits, Collection } = require("discord.js");
+const {
+  Client,
+  GatewayIntentBits,
+  Collection,
+  Partials,
+} = require("discord.js");
 
 const axios = require("axios");
 
@@ -11,7 +16,9 @@ const client = new Client({
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
+    GatewayIntentBits.DirectMessages,
   ],
+  partials: [Partials.Channel],
 });
 
 const eventsPath = path.join(__dirname, "handleEvents");
@@ -55,10 +62,8 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 client.on("messageCreate", async (message) => {
-  const channel = client.channels.cache.get(message.channelId);
-
   if (message.content === "ping") {
-    await channel.send({ content: "pong" });
+    await message.reply("pong");
   }
 });
 

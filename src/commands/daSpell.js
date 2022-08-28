@@ -61,6 +61,10 @@ module.exports = {
           embeds: [buildSpellCard(spell)],
           components: [row],
         });
+      })
+      .catch((err) => {
+        console.log(err);
+        interaction.reply({ content: "error fetching spell" });
       });
   },
 };
